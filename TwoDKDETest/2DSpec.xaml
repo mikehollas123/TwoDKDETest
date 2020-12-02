@@ -1,0 +1,40 @@
+﻿<Window x:Class="TwoDKDETest._2DSpec"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TwoDKDETest"
+               xmlns:s="http://schemas.abtsoftware.co.uk/scichart"
+        mc:Ignorable="d"
+        Title="_2DSpec" Height="450" Width="800">
+    <Grid>
+        <s:SciChartSurface x:Name="sciChartSurface"  s:ThemeManager.Theme="BrightSpark" Background="White"   ZoomState="UserZooming">
+
+
+
+            <!--  Create an X Axis  -->
+            <s:SciChartSurface.XAxis>
+                <s:NumericAxis AxisTitle="m/z"  BorderThickness="0,1,0,0"  BorderBrush="Black" TitleFontSize="32" GrowBy="0.1,0.1" DrawMajorGridLines="False" DrawMinorGridLines="False" DrawMajorBands="False" />
+            </s:SciChartSurface.XAxis>
+            <!--  Create a Y Axis  -->
+            <s:SciChartSurface.YAxis>
+                <s:NumericAxis AxisTitle="intensity" BorderThickness="1,0,0,0" BorderBrush="Black"  TitleFontSize="32" GrowBy="0.1,0.1" DrawMajorGridLines="False" DrawMinorGridLines="False" DrawMajorBands="False" />
+            </s:SciChartSurface.YAxis>
+            <!--  Specify interactivity modifiers  -->
+            <s:SciChartSurface.ChartModifier>
+                <s:ModifierGroup>
+                    <s:ZoomPanModifier XyDirection="XyDirection" ClipModeX="None"
+                               ZoomExtentsY="False"/>
+                    <s:MouseWheelZoomModifier ActionType="Zoom" XyDirection="XYDirection"/>
+                    <s:RubberBandXyZoomModifier ExecuteOn="MouseRightButton" IsXAxisOnly="True"/>
+                    <s:ZoomExtentsModifier ExecuteOn="MouseDoubleClick" />
+
+              
+
+                </s:ModifierGroup>
+            </s:SciChartSurface.ChartModifier>
+
+        </s:SciChartSurface>
+
+    </Grid>
+</Window>

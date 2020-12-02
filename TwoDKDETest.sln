@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30428.66
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwoDKDETest", "TwoDKDETest\TwoDKDETest.csproj", "{6FB7CE6D-81F9-4029-A36D-88B3C3E982FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FB7CE6D-81F9-4029-A36D-88B3C3E982FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FB7CE6D-81F9-4029-A36D-88B3C3E982FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FB7CE6D-81F9-4029-A36D-88B3C3E982FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FB7CE6D-81F9-4029-A36D-88B3C3E982FB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83AF4C15-1371-41D3-BDF5-28E3C49F9988}
+	EndGlobalSection
+EndGlobal
