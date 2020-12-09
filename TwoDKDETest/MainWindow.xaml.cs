@@ -38,18 +38,113 @@ namespace TwoDKDETest
     public class MainDbContex
 
     {
+        public MainDbContex()
+        {
 
-      
- public double[,] _matrix { get; set; }
+            minMz = 500;
+            maxMz = 1400;
+            minSlope = 900_000;
+            maxSlope = 1400_000;
+            mzSampleRate = 0.01;
+            slopeSampleRate = 5000;
+
+
+
+            MikesSelectionWindow = new MikesSelectionObject() { MinMz = this.minMz, MaxMz=this.maxMz, MaxSlope = this.maxSlope, MinSlope=this.minSlope, Charge=0, ForceCharge = false};
+            mikesSelectionWindow.PropertyChanged += MikesSelectionWindow_PropertyChanged;
+        }
+
+        private void MikesSelectionWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            this.UpdatePlot?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event EventHandler UpdatePlot;
+
+        public double[,] _matrix { get; set; }
 
         public ICollection<MainWindow.TwoDKDEChargeAssignment.Peak> _peaks { get; set; }
 
         public double minMz { get; set; }
-
+        public double maxMz { get; set; }
+        public double maxSlope { get; set; }
         public double minSlope { get; set; }
         public double mzSampleRate { get; set; }
         public double slopeSampleRate { get; set; }
+
+        public IChargeData _chargeData { get; set; }
+
+        MikesSelectionObject mikesSelectionWindow;
+
+        public MikesSelectionObject MikesSelectionWindow
+        {
+            get { return mikesSelectionWindow; }
+            set { mikesSelectionWindow = value; }
+        }
+
+     
+
     }
+    public class MikesSelectionObject : INotifyPropertyChanged 
+    {
+        private bool forceCharge;
+
+        public bool ForceCharge
+        {
+            get { return forceCharge; }
+            set { forceCharge = value; this.OnPropertyChanged(nameof(ForceCharge)); }
+        }
+
+
+        private int charge;
+
+        public int Charge
+        {
+            get { return charge; }
+            set { charge = value; this.OnPropertyChanged(nameof(Charge)); }
+        }
+
+
+        private double _minMZ;
+
+        public double MinMz
+        {
+            get { return _minMZ; }
+            set { _minMZ = value; this.OnPropertyChanged(nameof(MinMz)); }
+        }
+
+        private double _maxMZ;
+
+        public double MaxMz
+        {
+            get { return _maxMZ; }
+            set { _maxMZ = value; this.OnPropertyChanged(nameof(MaxMz)); }
+        }
+
+
+        private double _minSlope;
+
+        public double MinSlope
+        {
+            get { return _minSlope; }
+            set { _minSlope = value; this.OnPropertyChanged(nameof(MinSlope)); }
+        }
+
+        private double _maxSlope;
+
+        public double MaxSlope
+        {
+            get { return _maxSlope; }
+            set { _maxSlope = value; this.OnPropertyChanged(nameof(MaxSlope)); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string name)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -91,12 +186,6 @@ namespace TwoDKDETest
             
 
 
-            theViewModel.minMz = 1000;
-            double maxMz = 1500;
-            theViewModel.minSlope = 500_000;
-            double maxSlope = 4_500_000;
-            theViewModel.mzSampleRate = 0.01;
-            theViewModel.slopeSampleRate = 5000;
 
 
             double rSquared = 0.996;
@@ -108,7 +197,7 @@ namespace TwoDKDETest
 
             string calfile = @"C:\Data\BOB\othercalibrationfolders\boltcal.txt";
             IChargeData chargeData = EmpiricalChargeData.CreateFromCalibrationFile(calfile);
-            chargeData = GaussianInterpolatedChargeData.InterpolateMissingCharges(chargeData, 250);
+            theViewModel._chargeData = GaussianInterpolatedChargeData.InterpolateMissingCharges(chargeData, 250);
 
 
             IInstrumentI2MSResolutionCalculator resolutionCalculator = new InstrumentI2MSResolutionCalculator(140000, 200);
@@ -118,21 +207,32 @@ namespace TwoDKDETest
 
 
 
-            var ChargeAssinger = new TwoDKDEChargeAssignment(chargeData, resolutionCalculator, po);
+            var ChargeAssinger = new TwoDKDEChargeAssignment(theViewModel._chargeData, resolutionCalculator, po);
 
-            string input = @"X:\Projects\2020 Kelleher - GIDI-UP\I2MS_Processing\Completed\CR3022_UREAdoneright_I2MS_1kV_IT0.05_001_data";
+            string input = @"C:\Data\I2MS\new IgG data\1877withstandard_HCLC_I2MS_1kV_IT0.05_001_data";
 
             var pingIons =  new PingOutputParser().ParseDirectory(new DirectoryInfo(input), rSquared, minToD, theViewModel.minSlope);
             var singleIons = pingIons.Select(x => new SingleIon(x.ScanNumber, x.Mz, x.Slope)).ToArray();
             Array.Sort(singleIons, new Comparison<ISingleIon>((x, y) => x.Mz.CompareTo(y.Mz)));
 
-            theViewModel._matrix =  ChargeAssinger.Assign(singleIons, theViewModel.minMz, maxMz, theViewModel.minSlope, maxSlope, theViewModel.mzSampleRate, theViewModel.slopeSampleRate);
+            theViewModel._matrix =  ChargeAssinger.Assign(singleIons, theViewModel.minMz, theViewModel.maxMz, theViewModel.minSlope, theViewModel.maxSlope, theViewModel.mzSampleRate, theViewModel.slopeSampleRate);
 
             theViewModel._peaks = ChargeAssinger.FindPeaks(theViewModel._matrix, theViewModel.minMz, theViewModel.minSlope, theViewModel.mzSampleRate, theViewModel.slopeSampleRate);
 
-           
 
-    
+            var outfile = @"C:\Data\I2MS\new IgG data\1877withstandard_HCLC_I2MS_1kV_IT0.05_001_data\peaks.txt";
+
+            
+            using (StreamWriter writer = new StreamWriter(outfile))
+            {
+                foreach (var peak in theViewModel._peaks)
+                {
+                    writer.WriteLine($"{peak.mz},{peak.Slope},{peak.intensity},{peak.BestCharge}");
+                }
+            }
+
+
+
         }
         public void loadKDEPlot()
         {
@@ -410,6 +510,14 @@ namespace TwoDKDETest
             specWin.Owner = this;
             specWin.DataContext = this.theViewModel;
             specWin.Show();
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            var peakkdeWin = new peakSlopeKDE();
+            peakkdeWin.Owner = this;
+            peakkdeWin.DataContext = this.theViewModel;
+            peakkdeWin.Show();
         }
     }
  

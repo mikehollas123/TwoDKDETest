@@ -16,7 +16,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
 
@@ -63,7 +63,7 @@
 
                 <s3D:ScatterRenderableSeries3D x:Name="ScatterSeries3D">
                     <s3D:ScatterRenderableSeries3D.PointMarker>
-                        <s3D:EllipsePointMarker3D Fill="#77ADFF2F" Size="0.1" Opacity="1"/>
+                        <s3D:EllipsePointMarker3D Fill="#77ADFF2F" Size="0.5" Opacity="1"/>
                     </s3D:ScatterRenderableSeries3D.PointMarker>
                 </s3D:ScatterRenderableSeries3D>
 
@@ -101,6 +101,7 @@
         <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Center" Height="64" VerticalAlignment="Center" Width="453" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Hidden"  Grid.Row="1"/>
         <Button Content="KDEPlot" Width="75" Height="25" Grid.Column="0" Click="Button_Click" Margin="28,160,28,225" />
         <Button Content="addPeaks" Width="75" Height="25" Grid.Column="0" Margin="28,220,28,165" Click="Button_Click_1" />
-        <Button Content="ShowSpec" HorizontalAlignment="Left" Grid.Column="0" VerticalAlignment="Top" Width="76" Margin="28,290,0,0" Click="Button_Click_2"/>
+        <Button Content="ShowSpec" Grid.Column="0" VerticalAlignment="Top" Width="76" Margin="27,290,29,0" Click="Button_Click_2"/>
+        <Button Content="Show peak Slope KDE" Grid.Column="0" VerticalAlignment="Top" Margin="10,335,0,0" Click="Button_Click_3" />
     </Grid>
 </Window>

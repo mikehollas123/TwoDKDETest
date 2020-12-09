@@ -1,6 +1,7 @@
 ﻿using MathNet.Numerics.Statistics;
 using SciChart.Charting.Model.DataSeries;
 using SciChart.Charting.Visuals.RenderableSeries;
+using SciChart.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TopDown;
+
 using TopDown.Cadmium.Kernel;
 using TopDown.MassSpectrometry;
 using TopDown.Tools;
@@ -34,19 +36,28 @@ namespace TwoDKDETest
         {
             InitializeComponent();
            this.Loaded += new RoutedEventHandler(_2DSpec_Loaded);
+
+            
+
+
+
         }
 
-
-        
+        private void ViewModel_UpdatePlot(object sender, EventArgs e)
+        {
+            this.LoadSpecrum();
+        }
 
         void _2DSpec_Loaded(object sender, RoutedEventArgs e)
         {
+            this.viewModel = this.DataContext as MainDbContex;
+            this.viewModel.UpdatePlot += ViewModel_UpdatePlot;
             LoadSpecrum();
         }
 
         public void LoadSpecrum()
         {
-            this.viewModel = this.DataContext as MainDbContex;
+            
             var series = new XyDataSeries<double>();
 
             var peaks = this.viewModel._peaks.OrderBy(x=>(x.Mass)).ToArray();
@@ -54,11 +65,29 @@ namespace TwoDKDETest
 
             //pEAK filter
 
-           
+            var filtedPeaks = peaks.Where(x => x.mz <= viewModel.MikesSelectionWindow.MaxMz && x.mz >= viewModel.MikesSelectionWindow.MinMz && x.Slope <= viewModel.MikesSelectionWindow.MaxSlope && x.Slope >= viewModel.MikesSelectionWindow.MinSlope).ToArray();
+            IProfileSpectrum profileSpec;
+            if (viewModel.MikesSelectionWindow.ForceCharge == false)
+            {
+                profileSpec = KDEofPeaks(filtedPeaks);
+            }
+            else
+            {
+                if (viewModel.MikesSelectionWindow.Charge == 0)
+                {
+                   var averageCharge = (int)filtedPeaks.Select(x => x.BestCharge).Average() ;
+                    viewModel.MikesSelectionWindow.Charge = averageCharge;
+                }
+                List<Peak> tempList = new List<Peak>();
+                foreach (var peak in filtedPeaks)
+                {
+                    tempList.Add( new Peak() {BestCharge = viewModel.MikesSelectionWindow.Charge, intensity= peak.intensity, mz=peak.mz, Slope=peak.Slope }) ;
+                }
 
+                profileSpec = KDEofPeaks(tempList.ToArray());
+            }
 
-
-            var profileSpec = KDEofPeaks(peaks);
+            
 
             var masses = profileSpec.GetMz();
             var ints = profileSpec.GetIntensity();
