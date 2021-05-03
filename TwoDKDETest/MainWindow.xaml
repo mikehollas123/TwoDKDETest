@@ -63,7 +63,7 @@
 
                 <s3D:ScatterRenderableSeries3D x:Name="ScatterSeries3D">
                     <s3D:ScatterRenderableSeries3D.PointMarker>
-                        <s3D:EllipsePointMarker3D Fill="#77ADFF2F" Size="0.5" Opacity="1"/>
+                        <s3D:EllipsePointMarker3D Fill="Green" Size="0.5" Opacity="1"/>
                     </s3D:ScatterRenderableSeries3D.PointMarker>
                 </s3D:ScatterRenderableSeries3D>
 
@@ -103,5 +103,6 @@
         <Button Content="addPeaks" Width="75" Height="25" Grid.Column="0" Margin="28,220,28,165" Click="Button_Click_1" />
         <Button Content="ShowSpec" Grid.Column="0" VerticalAlignment="Top" Width="76" Margin="27,290,29,0" Click="Button_Click_2"/>
         <Button Content="Show peak Slope KDE" Grid.Column="0" VerticalAlignment="Top" Margin="10,335,0,0" Click="Button_Click_3" />
+        <Button Content="ShowContor" Grid.Column="0" VerticalAlignment="Top" Width="76" Margin="42,110,40,0" Click="Button_Click_4" />
     </Grid>
 </Window>
